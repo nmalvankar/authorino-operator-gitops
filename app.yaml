@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: authorino-operator-app
+  namespace: openshift-gitops # Or the namespace where your Argo CD instance is installed
+spec:
+  project: default # Or a custom AppProject
+  source:
+    repoURL: https://github.com/nmalvankar/authorino-operator-gitops.git  # Your Git repository URL
+    targetRevision: HEAD # Or a specific branch/tag (e.g., 'main', 'v1.0.0')
+    path: operators/authorino-operator # Path to your operator manifests in the Git repo
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: openshift-operators # The target namespace for the operator installation
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true # If you want Argo CD to create the namespace if it doesn't exist
